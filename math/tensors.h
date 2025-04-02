@@ -43,30 +43,20 @@ struct tensor* tensor_init(int ndim, int *dim) {
 
 // Print tensor contents
 void tensor_print(struct tensor *p) {
-    //printf("\nNDIM = %d\n", p->ndim);
     int n = get_product(p->dim, p->ndim) * 3;
-    char *formatted_str = malloc(n + 1);
     
     int nm = *(p->dim + p->ndim - 1);
-    //printf("\nNM = %d\n", nm);
     char *inner_str = malloc(3 * nm + 3);
     
     inner_str[0] = '[';
-    for (int i = 0; i < 3 * nm + 3; i++) {
-        if (i % 3 == 0) {
-            inner_str[i + 1] = '%';
-        } else if (i % 3 == 1) {
-            inner_str[i + 1] = 'f';
-        } else {
-            inner_str[i + 1] = ',';
-        }
+    int pos = 1;
+    
+    for (int i = 0; i < nm; i++) {
+        pos += sprintf(inner_str + pos, "%f,", p->data[i]);
     }
-    
-    inner_str[3 * nm + 1] = ']';
-    inner_str[3 * nm + 2] = '\0';
-    
-    //printf("\nINNER_STR = %s\n", inner_str);
-    
+    inner_str[pos - 1] = ']'; // Replace last comma with closing bracket
+    inner_str[pos] = '\0';
+
     int i = 0;
     char *buf;
     while (i <= p->ndim - 2) {
@@ -75,9 +65,9 @@ void tensor_print(struct tensor *p) {
         inner_str = buf;
         i++;
     }
-    
-    //printf("\nBUF = %s\n", buf);
-    array_printf_dbl(buf, p->data);
+
+    printf("%s\n", buf);  // Ensure output is printed
+    free(buf);
 }
 
 // Utility function to format tensor output
