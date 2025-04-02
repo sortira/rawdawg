@@ -21,6 +21,23 @@ void tensor_flatten(struct tensor *p, double *out);
 struct tensor* tensor_elementwise_mult(struct tensor *a, struct tensor *b);
 double tensor_dot_product(struct tensor *a, struct tensor *b);
 
+int get_flat_index(int ndim, int *dim, ...) {
+    va_list args;
+    va_start(args, dim);
+
+    int flat_index = 0;
+    int stride = 1;
+
+    for (int d = ndim - 1; d >= 0; d--) {
+        int index = va_arg(args, int);
+        flat_index += index * stride;
+        stride *= dim[d];
+    }
+
+    va_end(args);
+    return flat_index;
+}
+
 // Function to calculate product of array elements
 int get_product(int *a, int size) {
     int product = 1;
